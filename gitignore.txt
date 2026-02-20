@@ -1,0 +1,5 @@
+# Docker data (will be recreated by the user)
+mosquitto/data/
+mosquitto/log/
+node_red_data/
+.DS_Store

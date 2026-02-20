@@ -1,0 +1,39 @@
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* mqtt_server = "YOUR_LAPTOP_IP"; // Your MSI Modern 15 IP
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  client.setServer(mqtt_server, 1883);
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    if (client.connect("NadiDevice")) {
+      client.subscribe("nadi/control");
+    } else {
+      delay(5000);
+    }
+  }
+}
+
+void loop() {
+  if (!client.connected()) reconnect();
+  client.loop();
+
+  static unsigned long lastMsg = 0;
+  if (millis() - lastMsg > 3000) {
+    lastMsg = millis();
+    int bpm = random(65, 110); // Simulated Nadi Heartbeat
+    String payload = "{\"heartrate\": " + String(bpm) + "}";
+    client.publish("nadi/heartbeat", payload.c_str());
+  }
+}

@@ -1,0 +1,11 @@
+# Ignore Docker data volumes
+mosquitto/data/
+mosquitto/log/
+node_red_data/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore local environment files
+.env
